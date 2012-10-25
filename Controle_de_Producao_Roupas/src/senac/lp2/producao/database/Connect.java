@@ -1,24 +1,39 @@
 package senac.lp2.producao.database;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Connection;
 import java.sql.DriverManager;
 
 public class Connect {
-//	public void connectToAndQueryDatabase(String username, String password) {
-//
-//	    Connection con = DriverManager.getConnection(
-//	                         "jdbc:myDriver:myDatabase",
-//	                         username,
-//	                         password);
-//
-//	    Statement stmt = con.createStatement();
-//	    ResultSet rs = stmt.executeQuery("SELECT a, b, c FROM Table1");
-//
-//	    while (rs.next()) {
-//	        int x = rs.getInt("a");
-//	        String s = rs.getString("b");
-//	        float f = rs.getFloat("c");
-//	    }
-//	}
+	public void connectToAndQueryDatabase(String username, String password)
+			throws SQLException {
+
+		Connection con = DriverManager
+				.getConnection("jdbc:postgresql://localhost:5432/producao",
+						username, password);
+
+		Statement stmt = con.createStatement();
+		ResultSet rs = stmt.executeQuery("SELECT * FROM produtoPronto");
+
+		while (rs.next()) {
+			String s = rs.getString("nome");
+		}
+	}
+
+	public static void main(String[] args) throws SQLException {
+		Connection con = DriverManager.getConnection(
+				"jdbc:postgresql://localhost:5432/producao", "postgres",
+				"senacrs");
+
+		Statement stmt = con.createStatement();
+		ResultSet rs = stmt.executeQuery("SELECT * FROM produtoPronto");
+
+		while (rs.next()) {
+			String s = rs.getString("nome");
+			System.out.println(s);
+		}
+	}
 }
+//

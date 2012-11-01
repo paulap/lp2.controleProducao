@@ -13,7 +13,6 @@ public class Produto {
 
 	public Produto(long codigo, String nome, double valor, long quantidade,
 			long quantidadeMinima) {
-		super();
 		this.codigo = codigo;
 		this.nome = nome;
 		this.valor = valor;

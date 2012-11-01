@@ -14,7 +14,6 @@ public class MateriaPrima {
 
 	public MateriaPrima(long codigo, String nome, double valor, String unidade,
 			long quantidade, long quantidadeMinima) {
-		super();
 		this.codigo = codigo;
 		this.nome = nome;
 		this.valor = valor;

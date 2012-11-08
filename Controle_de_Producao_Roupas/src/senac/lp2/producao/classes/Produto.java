@@ -27,7 +27,7 @@ public class Produto {
 		this.quantidade = quantidade;
 		this.quantidadeMinima = quantidadeMinima;
 	}
-	
+
 	public int getCodigo() {
 		return codigo;
 	}

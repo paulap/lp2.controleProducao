@@ -2,7 +2,6 @@ package senac.lp2.producao.dao;
 
 import java.sql.CallableStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.sql.Statement;
@@ -10,14 +9,14 @@ import java.sql.Connection;
 import senac.lp2.producao.classes.Produto;
 
 public class ProdutoDAO {
-	Connection con = null;
+	private Connection con = null;
 
-	public void connect() throws SQLException {
+	public void connect() throws Exception {
 		Connect connect = new Connect();
 		con = connect.getConnect();
 	}
 
-	public int produzir(int cod, int quant) throws SQLException {
+	public int produzir(int cod, int quant) throws Exception {
 		connect();
 		CallableStatement cs = con.prepareCall("{call fProducao(?, ?, ?)}");
 		cs.setInt(1, cod);
@@ -25,10 +24,14 @@ public class ProdutoDAO {
 		cs.registerOutParameter(3, java.sql.Types.INTEGER);
 		cs.execute();
 
-		return cs.getInt(3);
+		int res = cs.getInt(3);
+		
+		con.close();
+		
+		return res;
 	}
 
-	public List<Produto> listar() throws SQLException {
+	public List<Produto> listar() throws Exception {
 		connect();
 		List<Produto> lst = new ArrayList<Produto>();
 
@@ -41,10 +44,12 @@ public class ProdutoDAO {
 					.getInt("quantidade"), rs.getInt("quantmin")));
 		}
 
+		con.close();
+		
 		return lst;
 	}
 
-	public int cadastrar(Produto p) throws SQLException {
+	public int cadastrar(Produto p) throws Exception {
 		connect();
 		CallableStatement cs = con
 				.prepareCall("{call fCadastrarProdutoPronto(?, ?, ?, ?, ?)}");
@@ -55,13 +60,17 @@ public class ProdutoDAO {
 		cs.registerOutParameter(5, java.sql.Types.INTEGER);
 		cs.execute();
 
-		return cs.getInt(5);
+		int res = cs.getInt(5);
+		
+		con.close();
+		
+		return res;
 	}
 
-	public int excluir(int cod, int op) throws SQLException {
-		//op : recebe a opção de exclusão
-		//se 1, apaga o registro de produto e sua relação com materia
-		//se 0, apaga somente o produto caso este não tenha relação com materia
+	public int excluir(int cod, int op) throws Exception {
+		// op : recebe a opção de exclusão
+		// se 1, apaga o registro de produto e sua relação com materia
+		// se 0, apaga somente o produto caso este não tenha relação com materia
 		connect();
 		CallableStatement cs = con
 				.prepareCall("{call fExcluirProduto(?, ?, ?)}");
@@ -70,10 +79,15 @@ public class ProdutoDAO {
 		cs.registerOutParameter(3, java.sql.Types.INTEGER);
 		cs.execute();
 
-		return cs.getInt(3);
+		int res = cs.getInt(3);
+		
+		con.close();
+		
+		return res;
 	}
-	
-	public int addMateria(int codProduto, int codMateria, int quantidade) throws SQLException {
+
+	public int addMateria(int codProduto, int codMateria, int quantidade)
+			throws Exception {
 		connect();
 		CallableStatement cs = con
 				.prepareCall("{call fCadastrarMateriaProduto(?, ?, ?, ?)}");
@@ -83,10 +97,14 @@ public class ProdutoDAO {
 		cs.registerOutParameter(4, java.sql.Types.INTEGER);
 		cs.execute();
 
-		return cs.getInt(4);
+		int res = cs.getInt(4);
+		
+		con.close();
+		
+		return res;
 	}
-	
-	public int delMateria(int codProduto, int codMateria) throws SQLException {
+
+	public int delMateria(int codProduto, int codMateria) throws Exception {
 		connect();
 		CallableStatement cs = con
 				.prepareCall("{call fExcluirMateriaProduto(?, ?, ?)}");
@@ -95,25 +113,29 @@ public class ProdutoDAO {
 		cs.registerOutParameter(3, java.sql.Types.INTEGER);
 		cs.execute();
 
-		return cs.getInt(3);
+		int res = cs.getInt(3);
+		
+		con.close();
+		
+		return res;
 	}
-	
-	public static void main(String[] args) throws SQLException {
+
+	public static void main(String[] args) throws Exception {
 		ProdutoDAO novo = new ProdutoDAO();
 		List<Produto> lst = novo.listar();
 
 		for (Produto p : lst) {
 			System.out.println(p.getNome() + "          " + p.getQuantidade());
 		}
-		
-		System.out.println(novo.delMateria(3, 2));
-		
-//		int res = novo.produzir(2, 3);
-//
-//		System.out.println(res);
 
-//		Produto p = new Produto("Vestido Amarelo", 130.50, 40, 10);
-//		
-//		System.out.println(novo.cadastrar(p));
+		System.out.println(novo.delMateria(3, 2));
+
+		// int res = novo.produzir(2, 3);
+		//
+		// System.out.println(res);
+
+		// Produto p = new Produto("Vestido Amarelo", 130.50, 40, 10);
+		//
+		// System.out.println(novo.cadastrar(p));
 	}
 }

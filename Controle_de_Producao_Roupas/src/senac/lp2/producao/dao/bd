@@ -76,7 +76,7 @@ $BODY$
 					loop
 						FETCH NEXT IN matProd INTO reg;
 						EXIT WHEN NOT FOUND;
-						update materiaPrima set quantidade = quantidade - reg.quantidade * $2 where codMateriaPrima = reg.codMateriaPrima;
+						update materiaPrima set quantidade = quantidade - (reg.quantidade * $2) where codMateriaPrima = reg.codMateriaPrima;
 						update produtoPronto set quantidade = quantidade + $2 where codProdutoPronto = $1;
 					end loop;
 					CLOSE matProd;
@@ -93,4 +93,217 @@ $BODY$
 
 --select fProducao(1, 19);
 
+cREATE OR REPLACE FUNCTION fCadastrarMateriaPrima(VARCHAR, FLOAT, VARCHAR, INTEGer, integer, out integer) 
+	RETURNS INTEGER AS 
+	$$
+		DECLARE 
+			cont INTEGER;
+		BEGIN
+			cont = (select COUNT(*) from materiaPrima where nome like $1);
+
+			if(cont = 0) then
+				$6 = 1;
+				insert into materiaPrima(nome, valor, unidade, quantidade, quantmin) 
+				values ($1, $2, $3, $4, $5);
+			ELSE if(cont > 0) then
+				$6 = 0;
+			end if;
+			ENd if;
+		END;
+	$$
+	LANGUAGE 'plpgsql';
+	
+cREATE OR REPLACE FUNCTION fCadastrarMateriaProduto(integer, integer, integer, out integer) 
+	RETURNS INTEGER AS 
+	$$
+		DECLARE 
+			cont INTEGER;
+			status INTEGER;
+		BEGIN
+			cont = (select COUNT(*) from produtoPronto where codProdutoPronto = $1);
+			if(cont > 0) then
+				cont = (select COUNT(*) from materiaPrima where codMateriaPrima = $2);
+				if(cont > 0) then
+					cont = (select COUNT(*) from materiaProduto where codProdutoPronto = $1 and codMateriaPrima = $2);
+					if(cont = 0) then
+						insert into materiaProduto(codProdutoPronto, codMateriaPrima, quantidade)
+						values ($1, $2, $3);
+						status = 1;
+						RAISE NOTICE 'Materia-Produto foi cadastrado';
+					else
+						status = -1;
+						RAISE NOTICE 'Materia-Produto já cadastrado';
+					end if;
+				else
+					status = 0;
+					RAISE NOTICE 'Materia não cadastrado';
+				end if;
+			ELSE if(cont = 0) then
+				status = -2;
+				RAISE NOTICE 'Produto não cadastrado';
+			end if;
+			ENd if;
+			Return status;
+		END;
+	$$
+	LANGUAGE 'plpgsql';
+	
+cREATE OR REPLACE FUNCTION fCadastrarProdutoPronto(VARCHAR, float, INTEGer, integer, OUT INTEGER) 
+	RETURNS INTEGER AS 
+	$$
+		DECLARE 
+			cont INTEGER;
+		BEGIN
+			cont = (select COUNT(*) from produtoPronto where nome like $1);
+
+			if(cont = 0) then
+				$5 = 1;
+				insert into produtoPronto(nome, valor, quantidade, quantmin) 
+				values ($1, $2, $3, $4);
+			ELSE if(cont > 0) then
+				$5 = 0;
+			end if;
+			ENd if;
+		END;
+	$$
+	LANGUAGE 'plpgsql';
+
+cREATE OR REPLACE FUNCTION fExcluirProduto(integer, integer, out integer) 
+	RETURNS INTEGER AS 
+	$$
+		DECLARE 
+			reg INTEGER;
+		BEGIN
+			reg = (SELECt count(*) from produtoPronto where codProdutoPronto = $1);
+
+			if(reg = 0) then 
+				$3 = -1;
+				--Produto não existe
+			else
+				if($2 = 0) then
+					reg = (Select count(*) from materiaProduto where codProdutoPronto = $1);
+					if(reg > 0)then
+						$3 = 0;
+						--Selecionada a opção de não exluir relação com materia prima, 
+						--no entanto produto faz parte da tabela
+					else
+						delete FROM produtoPronto where codProdutoPronto = $1;
+						$3 = 1;
+						--Selecionada a opção de não exluir relação com materia prima, 
+						--exclui produto porque o mesmo não se encontra na tabela
+					end if;
+				else if($2 = 1)then
+					delete FROM materiaProduto where codProdutoPronto = $1;
+					delete FROM produtoPronto where codProdutoPronto = $1;
+					$3 = 1;
+					--Selecionada a opção de excluir relação com materia prima
+				end if;
+				end if;
+			end if;
+		END;
+	$$
+	LANGUAGE 'plpgsql'
+
+cREATE OR REPLACE FUNCTION fExcluirMateriaPrima(integer, integer, out integer) 
+	RETURNS INTEGER AS 
+	$$
+		DECLARE 
+			reg INTEGER;
+		BEGIN
+			reg = (SELECt count(*) from materiaPrima where codMateriaPrima = $1);
+
+			if(reg = 0) then 
+				$3 = -1;
+				--Materia não existe
+			else
+				if($2 = 0) then
+					reg = (Select count(*) from materiaProduto where codMateriaPrima = $1);
+					if(reg > 0)then
+						$3 = 0;
+						--Selecionada a opção de não exluir relação com produto, 
+						--no entanto materia faz parte da tabela
+					else
+						delete FROM materiaPrima where codMateriaPrima = $1;
+						$3 = 1;
+						--Selecionada a opção de não exluir relação com produto, 
+						--exclui materia porque o mesmo não se encontra na tabela
+					end if;
+				else if($2 = 1)then
+					delete FROM materiaProduto where codMateriaPrima = $1;
+					delete FROM materiaPrima where codMateriaPrima = $1;
+					$3 = 1;
+					--Selecionada a opção de excluir relação com produto
+				end if;
+				end if;
+			end if;
+		END;
+	$$
+	LANGUAGE 'plpgsql'
+
+cREATE OR REPLACE FUNCTION fCadastrarMateriaProduto(integer, integer, integer, out integer) 
+	RETURNS INTEGER AS 
+	$$
+		DECLARE 
+			cont INTEGER;
+			status INTEGER;
+		BEGIN
+			cont = (select COUNT(*) from produtoPronto where codProdutoPronto = $1);
+			if(cont > 0) then
+				cont = (select COUNT(*) from materiaPrima where codMateriaPrima = $2);
+				if(cont > 0) then
+					cont = (select COUNT(*) from materiaProduto where codProdutoPronto = $1 and codMateriaPrima = $2);
+					if(cont = 0) then
+						insert into materiaProduto(codProdutoPronto, codMateriaPrima, quantidade)
+						values ($1, $2, $3);
+						$4 = 1;
+						RAISE NOTICE 'Materia-Produto foi cadastrado';
+					else
+						$4 = 0;
+						RAISE NOTICE 'Materia-Produto já cadastrado';
+					end if;
+				else
+					$4 = -1;
+					RAISE NOTICE 'Materia não cadastrado';
+				end if;
+			ELSE if(cont = 0) then
+				$4 = -2;
+				RAISE NOTICE 'Produto não cadastrado';
+			end if;
+			ENd if;
+		END;
+	$$
+	LANGUAGE 'plpgsql';
+
+cREATE OR REPLACE FUNCTION fExcluirMateriaProduto(integer, integer, out integer) 
+	RETURNS INTEGER AS 
+	$$
+		DECLARE 
+			cont INTEGER;
+			status INTEGER;
+		BEGIN
+			cont = (select COUNT(*) from produtoPronto where codProdutoPronto = $1);
+			if(cont > 0) then
+				cont = (select COUNT(*) from materiaPrima where codMateriaPrima = $2);
+				if(cont > 0) then
+					cont = (select COUNT(*) from materiaProduto where codProdutoPronto = $1 and codMateriaPrima = $2);
+					if(cont = 0) then
+						$3 = 0;
+						RAISE NOTICE 'Materia-Produto não cadastrado';
+					else
+						delete FROM materiaProduto where codProdutoPronto = $1 and codMateriaPrima = $2;
+						$3 = 1;
+						RAISE NOTICE 'Materia-Produto excluído';
+					end if;
+				else
+					$3 = -1;
+					RAISE NOTICE 'Materia não cadastrado';
+				end if;
+			ELSE if(cont = 0) then
+				$3 = -2;
+				RAISE NOTICE 'Produto não cadastrado';
+			end if;
+			ENd if;
+		END;
+	$$
+	LANGUAGE 'plpgsql';
 --postgres@localhost:5432

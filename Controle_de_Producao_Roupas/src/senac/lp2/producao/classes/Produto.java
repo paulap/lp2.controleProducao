@@ -1,18 +1,18 @@
 package senac.lp2.producao.classes;
 
 public class Produto {
-	private long codigo;
+	private int codigo;
 	private String nome;
 	private double valor;
-	private long quantidade;
-	private long quantidadeMinima;
+	private int quantidade;
+	private int quantidadeMinima;
 
 	public Produto() {
 
 	}
 
-	public Produto(long codigo, String nome, double valor, long quantidade,
-			long quantidadeMinima) {
+	public Produto(int codigo, String nome, double valor, int quantidade,
+			int quantidadeMinima) {
 		this.codigo = codigo;
 		this.nome = nome;
 		this.valor = valor;
@@ -20,11 +20,19 @@ public class Produto {
 		this.quantidadeMinima = quantidadeMinima;
 	}
 
-	public long getCodigo() {
+	public Produto(String nome, double valor, int quantidade,
+			int quantidadeMinima) {
+		this.nome = nome;
+		this.valor = valor;
+		this.quantidade = quantidade;
+		this.quantidadeMinima = quantidadeMinima;
+	}
+	
+	public int getCodigo() {
 		return codigo;
 	}
 
-	public void setCodigo(long codigo) {
+	public void setCodigo(int codigo) {
 		this.codigo = codigo;
 	}
 
@@ -44,19 +52,19 @@ public class Produto {
 		this.valor = valor;
 	}
 
-	public long getQuantidade() {
+	public int getQuantidade() {
 		return quantidade;
 	}
 
-	public void setQuantidade(long quantidade) {
+	public void setQuantidade(int quantidade) {
 		this.quantidade = quantidade;
 	}
 
-	public long getQuantidadeMinima() {
+	public int getQuantidadeMinima() {
 		return quantidadeMinima;
 	}
 
-	public void setQuantidadeMinima(long quantidadeMinima) {
+	public void setQuantidadeMinima(int quantidadeMinima) {
 		this.quantidadeMinima = quantidadeMinima;
 	}
 }

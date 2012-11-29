@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import senac.lp2.producao.classes.MateriaPrima;
-import senac.lp2.producao.classes.Produto;
 
 public class MateriaPrimaDAO {
 	private Connection con = null;

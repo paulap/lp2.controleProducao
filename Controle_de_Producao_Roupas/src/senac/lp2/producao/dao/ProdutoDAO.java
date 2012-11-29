@@ -128,14 +128,14 @@ public class ProdutoDAO {
 			System.out.println(p.getNome() + "          " + p.getQuantidade());
 		}
 
-		System.out.println(novo.delMateria(3, 2));
+		//System.out.println(novo.delMateria(3, 2));
 
 		// int res = novo.produzir(2, 3);
 		//
 		// System.out.println(res);
 
-		// Produto p = new Produto("Vestido Amarelo", 130.50, 40, 10);
-		//
-		// System.out.println(novo.cadastrar(p));
+//		 Produto p = new Produto("Vestido Verde", 130.50, 40, 10);
+//		
+//		 System.out.println(novo.cadastrar(p));
 	}
 }

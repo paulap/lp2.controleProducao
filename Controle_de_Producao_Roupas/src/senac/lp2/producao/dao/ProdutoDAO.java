@@ -1,6 +1,7 @@
 package senac.lp2.producao.dao;
 
 import java.sql.CallableStatement;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +39,27 @@ public class ProdutoDAO {
 		Statement stmt = con.createStatement();
 		ResultSet rs = stmt.executeQuery("SELECT * FROM produtoPronto");
 
+		while (rs.next()) {
+			lst.add(new Produto(rs.getInt("codprodutopronto"), rs
+					.getString("nome"), rs.getDouble("valor"), rs
+					.getInt("quantidade"), rs.getInt("quantmin")));
+		}
+
+		con.close();
+		
+		return lst;
+	}
+	
+	public List<Produto> listar(int codProduto) throws Exception {
+		connect();
+		List<Produto> lst = new ArrayList<Produto>();
+
+		PreparedStatement ps = con.prepareStatement("SELECT * FROM produtoPronto where codProdutoPronto  = ?");
+		
+		ps.setInt(1, codProduto);
+		
+		ResultSet rs = ps.executeQuery();
+				
 		while (rs.next()) {
 			lst.add(new Produto(rs.getInt("codprodutopronto"), rs
 					.getString("nome"), rs.getDouble("valor"), rs
@@ -122,7 +144,7 @@ public class ProdutoDAO {
 
 	public static void main(String[] args) throws Exception {
 		ProdutoDAO novo = new ProdutoDAO();
-		List<Produto> lst = novo.listar();
+		List<Produto> lst = novo.listar(2);
 
 		for (Produto p : lst) {
 			System.out.println(p.getNome() + "          " + p.getQuantidade());

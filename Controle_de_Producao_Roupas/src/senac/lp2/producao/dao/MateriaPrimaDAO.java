@@ -2,12 +2,14 @@ package senac.lp2.producao.dao;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
 import senac.lp2.producao.classes.MateriaPrima;
+import senac.lp2.producao.classes.Produto;
 
 public class MateriaPrimaDAO {
 	private Connection con = null;
@@ -36,6 +38,27 @@ public class MateriaPrimaDAO {
 		return lst;
 	}
 
+	public List<MateriaPrima> listar(int codMateria) throws Exception {
+		connect();
+		List<MateriaPrima> lst = new ArrayList<MateriaPrima>();
+
+		PreparedStatement ps = con.prepareStatement("SELECT * FROM materiaPrima where codMateriaPrima  = ?");
+		
+		ps.setInt(1, codMateria);
+		
+		ResultSet rs = ps.executeQuery();
+				
+		while (rs.next()) {
+			lst.add(new MateriaPrima(rs.getInt("codMateriaPrima"), rs
+					.getString("nome"), rs.getDouble("valor"), rs.getString("unidade"), rs
+					.getInt("quantidade"), rs.getInt("quantmin")));
+		}
+
+		con.close();
+		
+		return lst;
+	}
+	
 	public int cadastrar(MateriaPrima m) throws Exception {
 		connect();
 		CallableStatement cs = con
@@ -77,7 +100,7 @@ public class MateriaPrimaDAO {
 
 	public static void main(String[] args) throws Exception {
 		MateriaPrimaDAO novo = new MateriaPrimaDAO();
-		List<MateriaPrima> lst = novo.listar();
+		List<MateriaPrima> lst = novo.listar(2);
 
 		for (MateriaPrima m : lst) {
 			System.out.println(m.getNome() + "          " + m.getQuantidade());

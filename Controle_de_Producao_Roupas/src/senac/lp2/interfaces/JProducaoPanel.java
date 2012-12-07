@@ -8,6 +8,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import senac.lp2.interfaces.actions.JProducaoPanelAction;
+import senac.lp2.interfaces.actions.JProducaoPanelCloseAction;
 
 @SuppressWarnings("serial")
 public class JProducaoPanel extends JPanel {
@@ -21,7 +22,7 @@ public class JProducaoPanel extends JPanel {
 		add(quantidade);
 		add(new JButton(new JProducaoPanelAction(principal, cards, produto,
 				quantidade)));
-		add(new JButton("Cancelar"));
+		add(new JButton(new JProducaoPanelCloseAction(principal, cards)));
 	}
 
 	public JProducaoPanel() {

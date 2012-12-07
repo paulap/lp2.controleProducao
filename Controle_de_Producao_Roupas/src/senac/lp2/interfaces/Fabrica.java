@@ -10,8 +10,11 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 
+import senac.lp2.interfaces.actions.JMateriaMenuAction;
 import senac.lp2.interfaces.actions.JProducaoMenuAction;
+import senac.lp2.interfaces.actions.JProdutoMenuAction;
 import senac.lp2.interfaces.actions.JSairMenuAction;
+import senac.lp2.interfaces.actions.JSobreMenuAction;
 
 public class Fabrica {
 	private static JFrame frame = new JFrame("Controle de Produção de Roupas");
@@ -25,12 +28,18 @@ public class Fabrica {
 		JPanel principal = new JPanel(cards);
 
 		JPanel producao = new JProducaoPanel(principal, cards);
+		JPanel produto = new JProdutoPanel(principal, cards);
+		JPanel materia = new JMateriaPanel(principal, cards);
+		JPanel sobre = new JSobrePanel(principal, cards);
 		JPanel vazio = new JPanel();
 		JLabel label = new JLabel("Fábrica de Roupas");
 		vazio.add(label);
 
 		principal.add(vazio, PRINCIPAL);
 		principal.add(producao, JProducaoMenuAction.PRODUZIR);
+		principal.add(produto, JProdutoMenuAction.CONSULTAR1);
+		principal.add(materia, JMateriaMenuAction.CONSULTAR2);
+		principal.add(sobre, JSobreMenuAction.SOBRE);
 
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		// frame.setIconImage(new ImageIcon("pindorama.jpg").getImage());
@@ -51,6 +60,12 @@ public class Fabrica {
 		Action producaoAction = new JProducaoMenuAction(principal, cards);
 		edit.add(producaoAction);
 		
+		Action produtoAction = new JProdutoMenuAction(principal, cards);
+		edit.add(produtoAction);
+		
+		Action materiaAction = new JMateriaMenuAction(principal, cards);
+		edit.add(materiaAction);
+		
 //		JMenuItem consultaProduto = new JMenuItem("Produto");
 //		edit.add(consultaProduto);
 //		JMenuItem consultaMateria = new JMenuItem("Materia");
@@ -60,6 +75,9 @@ public class Fabrica {
 		// ----------------------------------------------------------------------------
 		JMenu help = new JMenu("Ajuda");
 		menubar.add(help);
+		
+		Action sobreAction = new JSobreMenuAction(principal, cards);
+		help.add(sobreAction);
 		// ----------------------------------------------------------------------------
 
 //		Action extratoAction = new JConsultarExtratoMenuAction();
@@ -69,7 +87,7 @@ public class Fabrica {
 
 		frame.setJMenuBar(menubar);
 
-		frame.setMinimumSize(new Dimension(600, 450));
+		frame.setMinimumSize(new Dimension(600, 700));
 
 		frame.pack();
 		frame.setVisible(true);

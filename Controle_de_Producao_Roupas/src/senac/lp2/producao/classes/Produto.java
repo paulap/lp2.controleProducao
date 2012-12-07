@@ -67,4 +67,14 @@ public class Produto {
 	public void setQuantidadeMinima(int quantidadeMinima) {
 		this.quantidadeMinima = quantidadeMinima;
 	}
+
+	@Override
+	public String toString() {
+		return nome + "\n" +
+				"\n\t[codigo = " + codigo + "] " +
+				"\n\t[valor=" + valor + "]" +
+				"\n\t[quantidade=" + quantidade + "] " +
+				"\n\t[quantidadeMinima=" + quantidadeMinima + "] \n";
+	}
+
 }

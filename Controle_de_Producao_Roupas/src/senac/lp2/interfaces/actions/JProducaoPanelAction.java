@@ -37,12 +37,12 @@ public class JProducaoPanelAction extends AbstractAction {
 			int res = p.produzir(codP, qnt);
 			if(res == 1){
 				System.out.println("ok");
-				JOptionPane.showMessageDialog(principal.getRootPane(),
-						"Nova produção registrada com sucesso.", "Operação efetuada com sucesso",
-						JOptionPane.INFORMATION_MESSAGE);
+//				JOptionPane.showMessageDialog(principal.getRootPane(),
+//						"Nova produção registrada com sucesso.", "Operação efetuada com sucesso",
+//						JOptionPane.INFORMATION_MESSAGE);
 			}else{
 				JOptionPane.showMessageDialog(principal.getRootPane(),
-						"Verifique se há materia-prima disponível.", "Operação cancelada",
+						"Verifique se há materia-prima disponível ou se o produto está cadastrado.", "Operação cancelada",
 						JOptionPane.ERROR_MESSAGE);
 			}
 		} catch (Exception e) {
